@@ -37,15 +37,17 @@ module.exports = {
 
   // Create a User 
   async createUser(req, res) {
-    await User.create(req.body)
-      .then((user) =>
+    try {
+      
+      await User.create(req.body)
+        .then((user) => 
         res.json(user)
       )
-      .catch((err) => {
-        console.log(err);
 
-        return res.status(500).json(err);
-      });
+    } catch (err) {
+
+      return res.status(500).json(err);
+    }
   },
 
   // Update a User 
