@@ -7,15 +7,24 @@ module.exports = {
   // Get all Users
   async getUsers(req, res) {
 
-    await User.find()
-      .then((users) => res.json(users))
-      .catch(err => res.status(500).json(err));
+    try {
+
+      await User.find()
+        .then((users) =>
+          res.json(users)
+        )
+
+    } catch (err) {
+
+      res.status(500).json(err)
+    }
+
   },
 
   // Get One User
-  getOneUser(req, res) {
+  async getOneUser(req, res) {
     try {
-      User.findOne({ _id: req.params.userId })
+      await User.findOne({ _id: req.params.userId })
         .select('-__v')
         .populate("thoughts")
         .populate("friends")
@@ -28,22 +37,25 @@ module.exports = {
   },
 
   // Create a User 
-  createUser(req, res) {
+  async createUser(req, res) {
+    try {
 
-    User.create(req.body)
-      .then((user) => res.json(user))
-      .catch(err => {
-        console.log(err)
+      await User.create(req.body)
+        .then((user) =>
+          res.json(user))
 
-        return res.status(500).json(err)
-      })
+    } catch (err) {
+
+      return res.status(500).json(err)
+
+    }
   },
 
   // Update a User 
-  updateUser(req, res) {
+  async updateUser(req, res) {
     try {
 
-      User.findOneAndUpdate(
+      await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $set: req.body },
         { runValidators: true, new: true }
@@ -63,10 +75,10 @@ module.exports = {
   },
 
   // Delete a User 
-  deleteUser(req, res) {
+  async deleteUser(req, res) {
     try {
 
-      User.findOneAndDelete({ _id: req.params.userId })
+      await User.findOneAndDelete({ _id: req.params.userId })
         .then((user) => {
           if (!user) {
             res.status(400).json({ message: "there is no user with that ID" })
@@ -74,7 +86,7 @@ module.exports = {
             return;
           }
         })
-        .then(() => res.json({ message: 'user and students deleted!' }))
+        .then(() => res.json({ message: 'user deleted!' }))
 
     } catch (err) {
 
@@ -83,10 +95,10 @@ module.exports = {
   },
 
   // Add a friend 
-  addFriend(req, res) {
+  async addFriend(req, res) {
     try {
 
-      User.findOneAndUpdate(
+      await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $push: { friends: req.params.friendId } },
         { runValidators: true, new: true }
@@ -102,10 +114,10 @@ module.exports = {
   },
 
   // Remove a friend 
-  removeFriend(req, res) {
+  async removeFriend(req, res) {
     try {
 
-      User.findOneAndUpdate(
+      await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $pull: { friends: req.params.friendId } },
         { runValidators: true, new: true }

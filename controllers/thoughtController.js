@@ -5,10 +5,10 @@ const { Thought, User } = require("../models")
 module.exports = {
 
   // Get All Thoughts 
-  getThoughts(req, res) {
+  async getThoughts(req, res) {
     try {
 
-      Thought.find()
+      await Thought.find()
         .then((thought) => {
 
           res.json(thought)
@@ -20,10 +20,10 @@ module.exports = {
   },
 
   // Get One Thought
-  getOneThought(req, res) {
+  async getOneThought(req, res) {
     try {
 
-      Thought.findOne({ _id: req.params.thoughtId })
+      await Thought.findOne({ _id: req.params.thoughtId })
         .select('-__v')
         .then((thought) => {
 
@@ -43,10 +43,10 @@ module.exports = {
   },
 
   // Create A Thought 
-  createThought(req, res) {
+  async createThought(req, res) {
     try {
 
-      Thought.create(req.body)
+      await Thought.create(req.body)
         .then((thought) => {
 
           const user = User.findOneAndUpdate(
@@ -73,10 +73,10 @@ module.exports = {
   },
 
   // Update A Thought 
-  updateThought(req, res) {
+  async updateThought(req, res) {
     try {
 
-      Thought.findOneAndUpdate(
+      await Thought.findOneAndUpdate(
         { _id: req.params.thoughtId },
         { $set: req.body },
         { runValidators: true, new: true }
@@ -100,10 +100,10 @@ module.exports = {
   },
 
   // Delete A Thought 
-  deleteThought(req, res) {
+  async deleteThought(req, res) {
     try {
 
-      Thought.findOneAndDelete({ _id: req.params.thoughtId })
+      await Thought.findOneAndDelete({ _id: req.params.thoughtId })
         .then((thought) => {
 
           if (!thought) {

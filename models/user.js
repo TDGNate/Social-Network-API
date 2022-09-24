@@ -13,14 +13,14 @@ const userSchema = new Schema(
       type: String,
       require: true,
       max_length: 40,
+      trim: true,
       unique: true,
-      trim: true
     },
     email: {
       type: String,
       require: true,
+      validate: [checkEmail, "Please add a valid email"],
       unique: true,
-      validate: [checkEmail, "Please add a valid email"]
     },
     thoughts: [
       {
