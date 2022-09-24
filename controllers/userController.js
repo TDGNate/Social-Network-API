@@ -88,4 +88,43 @@ module.exports = {
       res.status(500).json(err)
     }
   },
+  
+  // Add a friend 
+  async addFriend(req, res) {
+    try {
+
+      User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $push: { friends: req.params.friendId } },
+        { runValidators: true, new: true }
+      )
+        .then((user) => {
+
+          res.status(200).json(user.friends)
+        })
+    } catch (err) {
+      
+      res.status(500).json(err)
+    }
+  },
+
+  // Remove a friend 
+  async removeFriend(req, res) {
+    try {
+
+      User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $pull: { friends: req.params.friendId } },
+        { runValidators: true, new: true }
+      )
+        .then((user) => {
+
+          res.status(200).json(user.friends)
+        })
+    } catch (err) {
+      
+      res.status(500).json(err)
+    }
+  },
+    
 }
