@@ -5,10 +5,10 @@ const { Thought, User } = require("../models")
 module.exports = {
 
   // Get All Thoughts 
-  async getThoughts(req, res) {
+  getThoughts(req, res) {
     try {
 
-      await Thought.find()
+      Thought.find()
         .then((thought) => {
 
           res.json(thought)
@@ -20,10 +20,10 @@ module.exports = {
   },
 
   // Get One Thought
-  async getOneThought(req, res) {
+  getOneThought(req, res) {
     try {
 
-      await Thought.findOne({ _id: req.params.thoughtId })
+      Thought.findOne({ _id: req.params.thoughtId })
         .select('-__v')
         .then((thought) => {
 
@@ -35,7 +35,7 @@ module.exports = {
 
           res.json(thought)
         })
-      
+
     } catch (err) {
 
       res.status(500).json(err)
@@ -43,10 +43,10 @@ module.exports = {
   },
 
   // Create A Thought 
-  async createThought(req, res) {
+  createThought(req, res) {
     try {
 
-      await Thought.create(req.body)
+      Thought.create(req.body)
         .then((thought) => {
 
           const user = User.findOneAndUpdate(
@@ -57,15 +57,15 @@ module.exports = {
 
           if (!user) {
 
-            res.status(400).json({message: "There is no user to update their thoughts"})
+            res.status(400).json({ message: "There is no user to update their thoughts" })
 
             return;
           }
 
 
-         res.status(200).json(thought)
+          res.status(200).json(thought)
         })
-      
+
     } catch (err) {
 
       res.status(500).json(err)
@@ -73,10 +73,10 @@ module.exports = {
   },
 
   // Update A Thought 
-  async updateThought(req, res) {
+  updateThought(req, res) {
     try {
 
-      await Thought.findOneAndUpdate(
+      Thought.findOneAndUpdate(
         { _id: req.params.thoughtId },
         { $set: req.body },
         { runValidators: true, new: true }
@@ -88,11 +88,11 @@ module.exports = {
 
             return;
           }
-          
+
           res.status(200).json(thought)
 
         })
-      
+
     } catch (err) {
 
       res.status(500).json(err)
@@ -100,19 +100,19 @@ module.exports = {
   },
 
   // Delete A Thought 
-  async deleteThought(req, res) {
+  deleteThought(req, res) {
     try {
 
-      await Thought.findOneAndDelete({ _id: req.params.thoughtId })
+      Thought.findOneAndDelete({ _id: req.params.thoughtId })
         .then((thought) => {
-        
-        if (!thought) {
-        res.status(400).json({ message: "there is no thought with that ID to delete" })
-          
-        return;
-      }
 
-    })
+          if (!thought) {
+            res.status(400).json({ message: "there is no thought with that ID to delete" })
+
+            return;
+          }
+
+        })
 
     } catch (err) {
 

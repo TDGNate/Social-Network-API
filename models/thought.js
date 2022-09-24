@@ -20,7 +20,7 @@ const thoughtSchema = new Schema(
     reactions: [reactionSchema]
   },
   {
-    toJSON: {
+    toJson: {
       virtuals: true,
       getters: true,
     },

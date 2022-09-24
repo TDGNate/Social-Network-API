@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const checkEmail = (email) => {
+const checkEmail = function (email) {
   const regEx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
   // return true or fase based on if it's a valid email 
@@ -13,14 +13,14 @@ const userSchema = new Schema(
       type: String,
       require: true,
       max_length: 40,
-      trim: true,
-      unique: true
+      unique: true,
+      trim: true
     },
     email: {
       type: String,
       require: true,
-      validate: [checkEmail, "Please add a valid email"],
-      unique: true
+      unique: true,
+      validate: [checkEmail, "Please add a valid email"]
     },
     thoughts: [
       {
@@ -36,15 +36,16 @@ const userSchema = new Schema(
     ]
   },
   {
-    toJSON: {
+    toJson: {
       virtuals: true,
+      getters: true
     },
-    id: false,
+    id: false
   }
 )
 
 userSchema
-  .virtual('friendCount')
+  .virtual("friendCount")
   .get(() => this.friends.length);
 
 const User = model('user', userSchema);

@@ -6,55 +6,44 @@ module.exports = {
 
   // Get all Users
   async getUsers(req, res) {
-    try {
 
-      await User.find()
-      .then((users) =>
-         res.json(users)
-      )
-
-    } catch (err) {
-
-      res.status(500).json(err)
-    }
-
+    await User.find()
+      .then((users) => res.json(users))
+      .catch(err => res.status(500).json(err));
   },
 
   // Get One User
-  async getOneUser(req, res) {
+  getOneUser(req, res) {
     try {
-      await User.findOne({ _id: req.params.userId })
+      User.findOne({ _id: req.params.userId })
         .select('-__v')
         .populate("thoughts")
         .populate("friends")
-      .then((user) =>
-       !user ? res.status(400).json({ message: 'no users' }) : res.json(user)
-      )
+        .then((user) =>
+          !user ? res.status(400).json({ message: 'no users' }) : res.json(user)
+        )
     } catch (err) {
       res.status(500).json(err)
     }
   },
 
   // Create a User 
-  async createUser(req, res) {
-    try {
-      
-      await User.create(req.body)
-        .then((user) => 
-        res.json(user)
-      )
+  createUser(req, res) {
 
-    } catch (err) {
+    User.create(req.body)
+      .then((user) => res.json(user))
+      .catch(err => {
+        console.log(err)
 
-      return res.status(500).json(err);
-    }
+        return res.status(500).json(err)
+      })
   },
 
   // Update a User 
-  async updateUser(req, res) {
+  updateUser(req, res) {
     try {
 
-      await User.findOneAndUpdate(
+      User.findOneAndUpdate(
         { _id: req.params.userId },
         { $set: req.body },
         { runValidators: true, new: true }
@@ -66,7 +55,7 @@ module.exports = {
           }
 
           res.status(200).json(user)
-      })
+        })
     } catch (err) {
 
       res.status(500).json(err)
@@ -74,30 +63,30 @@ module.exports = {
   },
 
   // Delete a User 
-  async deleteUser(req, res) {
+  deleteUser(req, res) {
     try {
 
-      await User.findOneAndDelete({ _id: req.params.userId })
-      .then((user) => {
-        if (!user) {
-          res.status(400).json({ message: "there is no user with that ID" })
-          
-          return;
-        }
-      })
+      User.findOneAndDelete({ _id: req.params.userId })
+        .then((user) => {
+          if (!user) {
+            res.status(400).json({ message: "there is no user with that ID" })
+
+            return;
+          }
+        })
         .then(() => res.json({ message: 'user and students deleted!' }))
-      
+
     } catch (err) {
 
       res.status(500).json(err)
     }
   },
-  
+
   // Add a friend 
-  async addFriend(req, res) {
+  addFriend(req, res) {
     try {
 
-      await User.findOneAndUpdate(
+      User.findOneAndUpdate(
         { _id: req.params.userId },
         { $push: { friends: req.params.friendId } },
         { runValidators: true, new: true }
@@ -107,16 +96,16 @@ module.exports = {
           res.status(200).json(user.friends)
         })
     } catch (err) {
-      
+
       res.status(500).json(err)
     }
   },
 
   // Remove a friend 
-  async removeFriend(req, res) {
+  removeFriend(req, res) {
     try {
 
-      await  User.findOneAndUpdate(
+      User.findOneAndUpdate(
         { _id: req.params.userId },
         { $pull: { friends: req.params.friendId } },
         { runValidators: true, new: true }
@@ -126,9 +115,9 @@ module.exports = {
           res.status(200).json(user.friends)
         })
     } catch (err) {
-      
+
       res.status(500).json(err)
     }
   },
-    
+
 }
