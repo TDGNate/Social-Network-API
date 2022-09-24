@@ -8,7 +8,7 @@ module.exports = {
   async getUsers(req, res) {
     try {
 
-      User.find()
+      await User.find()
       .then((users) =>
          res.json(users)
       )
@@ -23,8 +23,10 @@ module.exports = {
   // Get One User
   async getOneUser(req, res) {
     try {
-      User.findOne({ _id: req.params.userId })
-      .select('-__v')
+      await User.findOne({ _id: req.params.userId })
+        .select('-__v')
+        .populate("thoughts")
+        .populate("friends")
       .then((user) =>
        !user ? res.status(400).json({ message: 'no users' }) : res.json(user)
       )
@@ -35,7 +37,7 @@ module.exports = {
 
   // Create a User 
   async createUser(req, res) {
-    User.create(req.body)
+    await User.create(req.body)
       .then((user) =>
         res.json(user)
       )
@@ -50,7 +52,7 @@ module.exports = {
   async updateUser(req, res) {
     try {
 
-      User.findOneAndUpdate(
+      await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $set: req.body },
         { runValidators: true, new: true }
@@ -73,7 +75,7 @@ module.exports = {
   async deleteUser(req, res) {
     try {
 
-      User.findOneAndDelete({ _id: req.params.userId })
+      await User.findOneAndDelete({ _id: req.params.userId })
       .then((user) => {
         if (!user) {
           res.status(400).json({ message: "there is no user with that ID" })
@@ -93,7 +95,7 @@ module.exports = {
   async addFriend(req, res) {
     try {
 
-      User.findOneAndUpdate(
+      await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $push: { friends: req.params.friendId } },
         { runValidators: true, new: true }
@@ -112,7 +114,7 @@ module.exports = {
   async removeFriend(req, res) {
     try {
 
-      User.findOneAndUpdate(
+      await  User.findOneAndUpdate(
         { _id: req.params.userId },
         { $pull: { friends: req.params.friendId } },
         { runValidators: true, new: true }
