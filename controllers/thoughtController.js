@@ -11,8 +11,9 @@ module.exports = {
       await Thought.find()
         .then((thought) => {
 
-          res.json(thought)
+          res.status(200).json(thought)
         })
+      
     } catch (err) {
 
       res.status(500).json(err)
@@ -129,10 +130,37 @@ module.exports = {
   async createReaction(req, res) {
     try {
 
-      Thought.findOneAndUpdate(
+      await Thought.findOneAndUpdate(
         { _id: req.params.thoughtId },
         { $push: { reactions: req.body } },
         { runValidators: true, new: true }
+      )
+        .then((thought) => {
+
+          if (!thought) {
+            res.status(400).json({ message: "no thought found" })
+
+            return;
+          }
+
+          res.status(200).json(thought)
+
+        })
+    } catch (err) {
+
+      res.status(500).json(err)
+
+    }
+  },
+
+  // Remove A Reaction 
+  async deleteReaction(req, res) {
+    try {
+
+      await Thought.findOneAndUpdate(
+        { _id: req.params.thoughtId },
+        { $pull: { reactions: { _id: req.params.reactionId } } },
+        { new: true }
       )
         .then((thought) => {
 
@@ -150,5 +178,5 @@ module.exports = {
       res.status(500).json(err)
 
     }
-  }
+  },
 }
