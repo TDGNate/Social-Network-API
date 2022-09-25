@@ -112,11 +112,43 @@ module.exports = {
             return;
           }
 
+          res.status(200).json({
+            message: "User has been deleted!",
+            deleted: thought
+          })
+
         })
 
     } catch (err) {
 
       res.status(500).json(err)
+    }
+  },
+
+  // Create A Reaction 
+  async createReaction(req, res) {
+    try {
+
+      Thought.findOneAndUpdate(
+        { _id: req.params.thoughtId },
+        { $push: { reactions: req.body } },
+        { runValidators: true, new: true }
+      )
+        .then((thought) => {
+
+          if (!thought) {
+            res.status(400).json({ message: "no thought found" })
+
+            return;
+          }
+
+          res.status(200).json(thought.reactions)
+
+        })
+    } catch (err) {
+
+      res.status(500).json(err)
+
     }
   }
 }
